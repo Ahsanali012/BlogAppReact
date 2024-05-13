@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import  { fetchBlogs } from "../../Redux/Features/Blogs/BlogSlice";
+import { fetchBlogs } from "../../Redux/Features/Blogs/BlogSlice";
 import Card from "../Blogs/Card";
 
 const PostCards = () => {
@@ -10,14 +10,14 @@ const PostCards = () => {
   const startIndex = (currentPage - 1) * blogsPerPage;
   const endIndex = currentPage * blogsPerPage;
 
-  console.log("startIndex-->",startIndex)
-  console.log("endIndex-->",endIndex)
+  console.log("startIndex-->", startIndex);
+  console.log("endIndex-->", endIndex);
 
   const { blogs, isLoading, isError, error } = useSelector(
     (state) => state.blogs
   );
 
-
+  console.log("blogs-->", blogs);
 
   const paginatedBlogs = blogs.slice(startIndex, endIndex);
 
@@ -29,9 +29,7 @@ const PostCards = () => {
     dispatch(fetchBlogs());
   }, [dispatch]);
 
-  console.log("blogs--->",blogs)
-
-  
+  console.log("blogs--->", blogs);
 
   return (
     <div className="w-full lg:w-2/3">
@@ -60,10 +58,9 @@ const PostCards = () => {
         </div>
       ) : (
         <div>
-        
           No blogs found!
-            {/* {Pagination} */}
-            <div className="">
+          {/* {Pagination} */}
+          <div className="">
             <button
               className="px-2 bg-red-500 text-white rounded cursor-pointer"
               onClick={() => handlePageChange(currentPage - 1)}
@@ -75,7 +72,7 @@ const PostCards = () => {
             <button
               className="px-2 bg-indigo-500 text-white rounded cursor-pointer"
               onClick={() => handlePageChange(currentPage + 1)}
-               disabled={endIndex>=blogs.length}
+              disabled={endIndex >= blogs.length}
             >
               Next
             </button>
