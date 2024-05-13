@@ -1,48 +1,88 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import  { fetchBlogs } from "../../Redux/Features/Blogs/BlogSlice";
+import Card from "../Blogs/Card";
 
 const PostCards = () => {
+  const dispatch = useDispatch();
+  const [currentPage, setCurrentPage] = useState(1);
+  const blogsPerPage = 5;
+  const startIndex = (currentPage - 1) * blogsPerPage;
+  const endIndex = currentPage * blogsPerPage;
+
+  console.log("startIndex-->",startIndex)
+  console.log("endIndex-->",endIndex)
+
+  const { blogs, isLoading, isError, error } = useSelector(
+    (state) => state.blogs
+  );
+
+
+
+  const paginatedBlogs = blogs.slice(startIndex, endIndex);
+
+  const handlePageChange = (nextPage) => {
+    setCurrentPage(nextPage);
+  };
+
+  useEffect(() => {
+    dispatch(fetchBlogs());
+  }, [dispatch]);
+
+  console.log("blogs--->",blogs)
+
+  
+
   return (
     <div className="w-full lg:w-2/3">
-    <a className="block rounded w-full lg:flex mb-10" href="#">
-      <div
-        className="h-48 lg:w-48 flex-none bg-cover text-center overflow-hidden opacity-75"
-        style={{
-          backgroundImage:
-            'url("https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2100&q=80")',
-        }}
-        title="deit is very important"
-      ></div>
-      <div className="bg-white rounded px-4 flex flex-col justify-between leading-normal">
+      {!isError && !isLoading && paginatedBlogs?.length > 0 ? (
         <div>
-          <div className="mt-3 md:mt-0 text-gray-700 font-bold text-2xl mb-2">
-            Aliquam venenatis nisl id purus rhoncus, in efficitur sem
-            hendrerit.
-          </div>
-          <p className="text-gray-700 text-base">
-            Duis euismod est quis lacus elementum, eu laoreet dolor
-            consectetur. Pellentesque sed neque vel tellus lacinia
-            elementum. Proin consequat ullamcorper eleifend.
-          </p>
-        </div>
-        <div className="flex mt-3">
-          <img
-            src="https://randomuser.me/api/portraits/men/86.jpg"
-            className="h-10 w-10 rounded-full mr-2 object-cover"
-            alt="Author"
-          />
-          <div>
-            <p className="font-semibold text-gray-700 text-sm capitalize">
-              {" "}
-              eduard franz{" "}
-            </p>
-            <p className="text-gray-600 text-xs"> 14 Aug </p>
+          {paginatedBlogs.map((blog, index) => (
+            <Card blog={blog} key={index} />
+          ))}
+          {/* {Pagination} */}
+          <div className="space-x-2">
+            <button
+              className="px-2 bg-red-500 text-white rounded cursor-pointer"
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </button>
+            <span>{currentPage}</span>
+            <button
+              className="px-2 bg-indigo-500 text-white rounded cursor-pointer"
+              onClick={() => handlePageChange(currentPage + 1)}
+            >
+              Next
+            </button>
           </div>
         </div>
-      </div>
-    </a>
-
-   
-  </div>
+      ) : (
+        <div>
+        
+          No blogs found!
+            {/* {Pagination} */}
+            <div className="">
+            <button
+              className="px-2 bg-red-500 text-white rounded cursor-pointer"
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </button>
+            <span>{currentPage}</span>
+            <button
+              className="px-2 bg-indigo-500 text-white rounded cursor-pointer"
+              onClick={() => handlePageChange(currentPage + 1)}
+               disabled={endIndex>=blogs.length}
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 
